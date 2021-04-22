@@ -7,6 +7,13 @@
         <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/falcon-rpc-common/pom.xml" />
+        <option value="$PROJECT_DIR$/falcon-rpc-simple/pom.xml" />
+        <option value="$PROJECT_DIR$/xxx/pom.xml" />
+      </set>
+    </option>
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
