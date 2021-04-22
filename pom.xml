@@ -4,10 +4,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!--jar包项目名-->
     <groupId>falcon.rpc</groupId>
-    <artifactId>falcon-rpc</artifactId>
-    <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <!--jar包模块名-->
+    <artifactId>com.falcon.rpc</artifactId>
+    <!--jar包版本号-->
+    <version>falcon-1.0-SNAPSHOT</version>
+    <!--打包成jar包-->
+    <packaging>jar</packaging>
+    <name>falcon</name>
+    <url>http://maven.apache.org</url>
+    <description>falcon-rpc跨语言、轻量级RPC</description>
+
     <properties>
 
     </properties>
