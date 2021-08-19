@@ -5,7 +5,7 @@ package com.falcon.rpc.config;
  * @Date: 2020-8-18 15:28
  * @Description:
  */
-public interface constant {
+public interface Constant {
 
     // zookeeper的session存活时长
     int ZK_SESSION_TIMEOUT = 5000;
