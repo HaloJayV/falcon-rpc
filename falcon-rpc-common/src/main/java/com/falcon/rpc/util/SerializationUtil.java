@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Description: Protobuf 序列化器
  */
 public class SerializationUtil {
-    // 保存被序列化后的对象
+    // key为被序列化的类对象，value为Schema对象
     private static Map<Class<?>, Schema<?>> cachedSchema = new ConcurrentHashMap<>();
     // 实例化一个特定类的新对象。
     private static Objenesis objenesis = new ObjenesisStd(true);
@@ -38,9 +38,10 @@ public class SerializationUtil {
         LinkedBuffer buffer = LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE);
         try {
             Schema<T> schema = getSchema(cls);
+            // 将obj对象进行序列化为字节流放到buffer，返回buffer的字节流数据
             return ProtobufIOUtil.toByteArray(obj, schema, buffer);
         } catch (Exception e) {
-            throw new IllegalStateException(e.getCause(), e);
+            throw new IllegalStateException(e.getMessage(), e);
         } finally {
             buffer.clear();
         }
@@ -50,7 +51,7 @@ public class SerializationUtil {
         try {
             T message = (T) objenesis.newInstance(cls);
             Schema<T> schema = getSchema(cls);
-            // data反序列化为message
+            // data字节数组反序列化为message类对象
             ProtobufIOUtil.mergeFrom(data, message, schema);
             return message;
         } catch (Exception e) {
