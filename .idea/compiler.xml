@@ -13,7 +13,6 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8">
-      <module name="falcon-rpc-common" target="1.8" />
       <module name="falcon-rpc-simple" target="1.8" />
       <module name="falcon-rpc-test" target="1.8" />
       <module name="v-rpc-common" target="1.8" />
