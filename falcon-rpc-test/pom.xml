@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>falcon-rpc-client</artifactId>
+    <artifactId>falcon-rpc-test</artifactId>
 
     <dependencies>
         <dependency>

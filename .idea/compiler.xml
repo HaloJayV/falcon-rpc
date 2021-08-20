@@ -3,9 +3,17 @@
   <component name="CompilerConfiguration">
     <annotationProcessing>
       <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="falcon-rpc-client" />
+        <module name="falcon-rpc-common" />
+        <module name="falcon-rpc-server" />
+        <module name="falcon-rpc-test" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8">
-      <module name="falcon-rpc-common" target="1.8" />
       <module name="falcon-rpc-simple" target="1.8" />
       <module name="v-rpc-common" target="1.8" />
       <module name="v-rpc-simple" target="1.8" />

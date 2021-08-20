@@ -5,11 +5,12 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/falcon-rpc-common/pom.xml" />
+        <option value="$PROJECT_DIR$/falcon-rpc-test/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
       <set>
-        <option value="$PROJECT_DIR$/falcon-rpc-common/pom.xml" />
         <option value="$PROJECT_DIR$/falcon-rpc-simple/pom.xml" />
         <option value="$PROJECT_DIR$/xxx/pom.xml" />
       </set>

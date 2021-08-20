@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ThreadPoolUtil {
 
-    public static ThreadPoolExecutor makeServverThreadPool(final String serviceName,
+    public static ThreadPoolExecutor makeServerThreadPool(final String serviceName,
                                                            int corePoolSize,
                                                            int maxPoolSize) {
        ThreadPoolExecutor serverHandlerPool = new ThreadPoolExecutor(
