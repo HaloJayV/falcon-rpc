@@ -15,7 +15,7 @@ import java.util.Objects;
  */
 public class RpcServiceInfo implements Serializable {
 
-    // 服务提供方的服务名称
+    // 服务提供方的接口名称
     private String serviceName;
     private String version;
 

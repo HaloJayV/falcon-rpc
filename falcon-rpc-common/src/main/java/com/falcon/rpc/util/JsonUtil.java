@@ -96,7 +96,7 @@ public class JsonUtil {
     public static String objectToJson(Object o) {
         String json = "";
         try {
-            json += objectMapper.writeValueAsString(o);
+            json = objectMapper.writeValueAsString(o);
         } catch (IOException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }

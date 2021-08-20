@@ -20,11 +20,6 @@ public class RpcDecoder extends ByteToMessageDecoder {
     private Class<?> genericClass;
     private Serializer serializer;
 
-    public RpcDecoder(Class<?> genericClass, Serializer serializer) {
-        this.genericClass = genericClass;
-        this.serializer = serializer;
-    }
-
     /**
      * 将被编码对象in进行反序列化为对象集合
      * @param context

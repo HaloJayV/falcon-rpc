@@ -10,11 +10,12 @@
         <module name="falcon-rpc-client" />
         <module name="falcon-rpc-common" />
         <module name="falcon-rpc-server" />
-        <module name="falcon-rpc-test" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8">
+      <module name="falcon-rpc-common" target="1.8" />
       <module name="falcon-rpc-simple" target="1.8" />
+      <module name="falcon-rpc-test" target="1.8" />
       <module name="v-rpc-common" target="1.8" />
       <module name="v-rpc-simple" target="1.8" />
       <module name="xxx" target="1.8" />
