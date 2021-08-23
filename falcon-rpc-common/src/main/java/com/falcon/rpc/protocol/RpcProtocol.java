@@ -47,7 +47,7 @@ public class RpcProtocol implements Serializable {
         }
         if((thisList == null && thatList != null)
         || (thisList != null && thatList == null)
-        || (thisList.size() != thatList.size()) {
+        || (thisList.size() != thatList.size())) {
             return false;
         }
         return thisList.contains(thatList) && thatList.containsAll(thisList);

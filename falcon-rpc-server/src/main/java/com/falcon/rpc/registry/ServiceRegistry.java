@@ -25,8 +25,9 @@ import java.util.Map;
 public class ServiceRegistry {
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceRegistry.class);
-
+    // zookeeper客户端
     private CuratorClient curatorClient;
+    // 保存节点路径元数据，包括ip、端口、服务信息等
     private List<String> pathList = new ArrayList<>();
 
     public ServiceRegistry(String registryAddress) {
@@ -34,7 +35,7 @@ public class ServiceRegistry {
         this.curatorClient = new CuratorClient(registryAddress, 5000);
     }
 
-    // 注册新的服务到注册中心
+    // 服务注册：注册新的服务到注册中心，也就是保存到对象RpcProtocol里
     public void registerService(String host, int port, Map<String, Object> serviceMap) {
         // 注册中心的所服务元数据信息集合
         List<RpcServiceInfo> serviceInfoList = new ArrayList<>();
@@ -56,6 +57,7 @@ public class ServiceRegistry {
             }
         }
         try {
+            // 服务的rpc协议对象
             RpcProtocol rpcProtocol = new RpcProtocol();
             rpcProtocol.setHost(host);
             rpcProtocol.setPort(port);
@@ -64,7 +66,9 @@ public class ServiceRegistry {
             byte[] bytes = serviceData.getBytes();
             // 拼接zookeeper节点路径，子节点为节点对象哈希值
             String path = Constant.ZK_DATA_PATH + "-" + rpcProtocol.hashCode();
+            // 将元数据绑定到该节点路径上
             path = this.curatorClient.createPathData(path, bytes);
+            // 节点路径集合
             pathList.add(path);
             logger.info("Register {} new service, host: {}, port: {}", serviceInfoList.size(), host, port);
         } catch (Exception e) {

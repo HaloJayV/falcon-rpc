@@ -14,6 +14,7 @@
         <module>falcon-rpc-common</module>
         <module>falcon-rpc-client</module>
         <module>falcon-rpc-server</module>
+        <module>falcon-rpc-test</module>
     </modules>
 
     <properties>

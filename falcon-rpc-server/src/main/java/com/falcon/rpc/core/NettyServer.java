@@ -26,8 +26,11 @@ public class NettyServer extends Server {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyServer.class);
     private Thread thread;
+    // 服务地址
     private String serverAddress;
+    // 服务注册中心
     private ServiceRegistry serviceRegistry;
+
     private Map<String, Object> serviceMap = new HashMap<>();
 
     public NettyServer(String serverAddress, String registryAddress) {
@@ -38,7 +41,9 @@ public class NettyServer extends Server {
     public void addService(String interfaceName, String version, Object serviceBean) {
         logger.info("Adding service, interface:{}, version:{}, bean:{}",
                 interfaceName, version, serviceBean);
+        // 拼接服务接口名名和版本号的服务id
         String serviceKey = ServiceUtil.makeServiceKey(interfaceName, version);
+        // 服务名为key
         serviceMap.put(serviceKey, serviceBean);
     }
 
@@ -63,12 +68,14 @@ public class NettyServer extends Server {
                             .childHandler(new RpcServerInitializer(serviceMap, threadPoolExecutor))
                             // 创建通道初始化对象
                             .childOption(ChannelOption.SO_KEEPALIVE, true);
+                    // socket
                     String[] array = serverAddress.split(":");
                     String host = array[0];
                     int port = Integer.parseInt(array[1]);
-                    // 绑定主机端口，通道进行监听
+                    // 绑定服务方的ip、端口
                     ChannelFuture future = bootstrap.bind(host, port).sync();
                     if(serviceRegistry != null) {
+                        // 服务注册
                         serviceRegistry.registerService(host, port, serviceMap);
                     }
                     logger.info("Server started on port {}", port);

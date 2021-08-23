@@ -5,6 +5,7 @@
     <file url="file://$PROJECT_DIR$/falcon-rpc-client" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/falcon-rpc-common" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/falcon-rpc-server" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/falcon-rpc-test" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>
