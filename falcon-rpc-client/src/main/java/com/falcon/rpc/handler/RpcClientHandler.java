@@ -69,8 +69,7 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
         ctx.channel();
     }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
+    public void close(){
         // 关闭通道前将通道里的数据写出来
         channel.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
     }

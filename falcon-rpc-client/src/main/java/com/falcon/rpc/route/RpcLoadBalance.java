@@ -1,5 +1,10 @@
 package com.falcon.rpc.route;
 
+import com.falcon.rpc.handler.RpcClientHandler;
+import com.falcon.rpc.protocol.RpcProtocol;
+
+import java.util.Map;
+
 /**
  * @Auther: JayV
  * @Email: javajayv@gmail.com
@@ -7,4 +12,5 @@ package com.falcon.rpc.route;
  * @Description:
  */
 public class RpcLoadBalance {
+    public abstract RpcProtocol route(String serviceKey, Map<RpcProtocol, RpcClientHandler> connectedServerNodes);
 }
