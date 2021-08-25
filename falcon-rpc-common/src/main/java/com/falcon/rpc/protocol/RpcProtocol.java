@@ -11,7 +11,7 @@ import java.util.Objects;
  * @Auther: JayV
  * @Email: javajayv@gmail.com
  * @Date: 2021-8-17 15:44
- * @Description: 自定义RPC协议
+ * @Description: 自定义RPC协议，相当于一个服务提供方
  */
 public class RpcProtocol implements Serializable {
 

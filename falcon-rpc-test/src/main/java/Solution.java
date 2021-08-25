@@ -1,20 +1,48 @@
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 class Solution {
-    public int lengthOfLongestSubstring(String s) {
-        HashMap<Character, Integer> window = new HashMap<>();
-        int res = 0, left = 0, right = 0;
-        while(right < s.length()) {
-            char c = s.charAt(right);
-            right++;
-            window.put(c, window.getOrDefault(c, 0) + 1);
-            while(window.get(c) > 1) {
-                char d = s.charAt(left);
-                left++;
-                window.put(d, window.get(d) - 1);
-            }
-            res = Math.max(res, right - left);
+
+    int size;
+    Map<Integer, Integer> map;
+
+    public Solution(int n, int[] blacklist) {
+        map = new HashMap<>();
+        size = n - blacklist.length;
+        int last = n - 1;
+        // 标记该索引已经有黑名单存在了
+        for(int b : blacklist) {
+            map.put(b, 666);
         }
-        return res;
+        for(int b : blacklist) {
+            // 已经在[size, n)内了，不操作
+            if(b >= size) {
+                continue;
+            }
+            // 已经存在了
+            while(map.containsKey(last)) {
+                last--;
+            }
+            // 放到数组尾部
+            map.put(b, last);
+            last--;
+        }
+    }
+
+    public int pick() {
+        Random random = new Random();
+        int index = random.nextInt(size) % size;
+        if(map.containsKey(index)) {
+            // 映射到数组尾部
+            return map.get(index);
+        }
+        return index;
     }
 }
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution obj = new Solution(n, blacklist);
+ * int param_1 = obj.pick();
+ */

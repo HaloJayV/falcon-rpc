@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Auther: JayV
  * @Email: javajayv@gmail.com
  * @Date: 2021-8-20 15:58
- * @Description:
+ * @Description: 客户端处理器，绑定服务通道
  */
 public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
     private static final Logger logger = LoggerFactory.getLogger(RpcClientHandler.class);
@@ -29,16 +29,20 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
     // key为请求id，val为请求对应的回调对象RpcFuture
     private ConcurrentHashMap<String, RpcFuture> pendingRPC = new ConcurrentHashMap<>();
     private volatile Channel channel;
+    // 服务方ip
     private SocketAddress remotePeer;
+    // 服务方协议对象
     private RpcProtocol rpcProtocol;
 
-    // 激活通道，开始与服务端远距离通信
+    // 绑定服务地址，激活通道，开始与服务端远距离通信
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
+        // 绑定当前通道channel的地址
         this.remotePeer = this.channel.remoteAddress();
     }
 
+    // 注册当前通道到上下文容器中
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
         super.channelRegistered(ctx);
@@ -46,9 +50,9 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
     }
 
     public RpcClientHandler() {
-
     }
 
+    // 通过rpc响应对象读取到服务返回信息
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcResponse response) throws Exception {
         String requestId = response.getRequestId();
@@ -56,6 +60,7 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
         RpcFuture rpcFuture = pendingRPC.get(requestId);
         // 表明该响应已经返回回调函数
         if(Objects.isNull(rpcFuture)) {
+            // 更新服务的回调状态
             pendingRPC.remove(requestId);
             rpcFuture.done(response);
         } else {
@@ -74,6 +79,7 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
         channel.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
     }
 
+    // 向服务方发送rpc请求
     public RpcFuture sendRequest(RpcRequest request) {
         RpcFuture rpcFuture = new RpcFuture(request);
         pendingRPC.put(request.getRequestId(), rpcFuture);
@@ -107,6 +113,7 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
     // 通道激活取消
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        // 操作容器，取消与服务方的通道
         super.channelInactive(ctx);
         ConnectionManager.getInstance().removeHandler(rpcProtocol);
     }

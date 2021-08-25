@@ -11,7 +11,7 @@ import java.util.Objects;
  * @Auther: JayV
  * @Email: javajayv@gmail.com
  * @Date: 2021-8-17 15:44
- * @Description: 服务提供方信息
+ * @Description: 服务提供方的接口信息
  */
 public class RpcServiceInfo implements Serializable {
 
