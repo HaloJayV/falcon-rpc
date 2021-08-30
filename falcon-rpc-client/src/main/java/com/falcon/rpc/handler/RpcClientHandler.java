@@ -29,7 +29,7 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
     // key为请求id，val为请求对应的回调对象RpcFuture
     private ConcurrentHashMap<String, RpcFuture> pendingRPC = new ConcurrentHashMap<>();
     private volatile Channel channel;
-    // 服务方ip
+    // 序列号
     private SocketAddress remotePeer;
     // 服务方协议对象
     private RpcProtocol rpcProtocol;

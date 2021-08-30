@@ -1,11 +1,15 @@
 package com.falcon.rpc.proxy;
 
 import com.falcon.rpc.codec.RpcRequest;
+import com.falcon.rpc.connect.ConnectionManager;
+import com.falcon.rpc.handler.RpcClientHandler;
 import com.falcon.rpc.handler.RpcFuture;
+import com.falcon.rpc.util.ServiceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.management.MethodInfo;
 
-import java.awt.*;
+import java.lang.management.MemoryManagerMXBean;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Objects;
@@ -14,11 +18,10 @@ import java.util.UUID;
 /**
  * @Auther: JayV
  * @Email: javajayv@gmail.com
- * @Date: 2021-8-20 15:59
+ * @Date: 2021-8-30 15:44
  * @Description:
  */
 public class ObjectProxy<T, P> implements InvocationHandler, RpcService<T, P, SerializableFunction<T>> {
-
     private static final Logger logger = LoggerFactory.getLogger(ObjectProxy.class);
     private Class<T> clazz;
     private String version;
@@ -28,32 +31,69 @@ public class ObjectProxy<T, P> implements InvocationHandler, RpcService<T, P, Se
         this.version = version;
     }
 
+    // 构造请求对象
+    private RpcRequest createRequest(String className, String methodName, Object[] args) {
+        RpcRequest request = new RpcRequest();
+        request.setRequestId(UUID.randomUUID().toString());
+        request.setClassName(className);
+        request.setMethodName(methodName);
+        request.setParameters(args);
+        request.setVersion(version);
+        Class[] parameterTypes = new Class[args.length];
+        for(int i = 0; i < args.length; i++) {
+            parameterTypes[i] = getClassType(args[i]);
+        }
+        request.setParameterTypes(parameterTypes);
+        // Debug
+        if (logger.isDebugEnabled()) {
+            logger.debug(className);
+            logger.debug(methodName);
+            for (int i = 0; i < parameterTypes.length; ++i) {
+                logger.debug(parameterTypes[i].getName());
+            }
+            for (int i = 0; i < args.length; ++i) {
+                logger.debug(args[i].toString());
+            }
+        }
+        return request;
+    }
 
+    private Class<?> getClassType(Object obj) {
+        Class<?> classType = obj.getClass();
+        return classType;
+    }
 
     @Override
     public RpcFuture call(String function, Objects... args) throws Exception {
-        return null;
+        String serviceKey = ServiceUtil.makeServiceKey(this.clazz.getName(), version);
+        RpcClientHandler handler = ConnectionManager.getInstance().chooseHandler(serviceKey);
+        RpcRequest request = createRequest(this.clazz.getName(), function, args);
+        RpcFuture rpcFuture = handler.sendRequest(request);
+        return rpcFuture;
     }
 
     @Override
     public RpcFuture call(SerializableFunction<T> tSerializableFunction, Objects... args) throws Exception {
-        return null;
+        String serviceKey = ServiceUtil.makeServiceKey(this.clazz.getName(), version);
+        RpcClientHandler handler = ConnectionManager.getInstance().chooseHandler(serviceKey);
+        RpcRequest request = createRequest(this.clazz.getName(), tSerializableFunction.getName(), args);
+        RpcFuture rpcFuture = handler.sendRequest(request);
+        return rpcFuture;
     }
 
-    // 动态代理客户端，强化执行客户端的请求方法
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if(Object.class == method.getDeclaringClass()) {
+            // 被代理的方法名
             String name = method.getName();
-            // 重写equals方法
             if("equals".equals(name)) {
                 return proxy == args[0];
-            } else if("hasCode".equals(name)) {
+            } else if("hashCode".equals(name)) {
                 return System.identityHashCode(proxy);
-            } else if("toString".equals(name)){
+            } else if("toString".equals(name)) {
                 return proxy.getClass().getName() + "@" +
                         Integer.toHexString(System.identityHashCode(proxy)) +
-                        ", with InvocationHandler" + this;
+                        ", with InvocationHandler " + this;
             } else {
                 throw new IllegalStateException(String.valueOf(method));
             }
@@ -62,18 +102,22 @@ public class ObjectProxy<T, P> implements InvocationHandler, RpcService<T, P, Se
         request.setRequestId(UUID.randomUUID().toString());
         request.setClassName(method.getDeclaringClass().getName());
         request.setMethodName(method.getName());
-        request.setParameterTypes(method.getParameterTypes());
-        request.setParameters(args);
         request.setVersion(version);
+        request.setParameters(args);
+        request.setParameterTypes(method.getParameterTypes());
         if(logger.isDebugEnabled()) {
             logger.debug(method.getDeclaringClass().getName());
             logger.debug(method.getName());
-            for(int i = 0; i < method.getParameterTypes().length; ++i) {
+            for(int i = 0; i < method.getParameterTypes().length; i++) {
                 logger.debug(method.getParameterTypes()[i].getName());
             }
-            for(int i = 0; i < args.length; i++) {
+            for(int i = 0; i < args.length;i++) {
                 logger.debug(args[i].toString());
             }
         }
+        String serviceKey = ServiceUtil.makeServiceKey(method.getDeclaringClass().getName(), version);
+        RpcClientHandler handler = ConnectionManager.getInstance().chooseHandler(serviceKey);
+        RpcFuture rpcFuture = handler.sendRequest(request);
+        return rpcFuture.get();
     }
 }

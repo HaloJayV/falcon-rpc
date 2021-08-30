@@ -46,7 +46,7 @@ public class ConnectionManager {
             4, 8, 600L, TimeUnit.SECONDS,
             new LinkedBlockingQueue<Runnable>(1000)
     );
-    // 服务节点映射，key为服务对象，val为响应的客户端处理器
+    // 服务节点映射，key为服务对象，val为服务方对当前服务方法对应的处理信息
     private Map<RpcProtocol, RpcClientHandler> connectedServerNodes = new ConcurrentHashMap<>();
     // 存放连接中的服务集合
     private CopyOnWriteArraySet<RpcProtocol> rpcProtocolSet = new CopyOnWriteArraySet<>();

@@ -1,48 +1,43 @@
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+
+import java.util.Arrays;
 
 class Solution {
-
-    int size;
-    Map<Integer, Integer> map;
-
-    public Solution(int n, int[] blacklist) {
-        map = new HashMap<>();
-        size = n - blacklist.length;
-        int last = n - 1;
-        // 标记该索引已经有黑名单存在了
-        for(int b : blacklist) {
-            map.put(b, 666);
+    public int superEggDrop(int k, int n) {
+        memo = new int[k + 1][n + 1];
+        for(int[] x : memo){
+            Arrays.fill(x, -1);
         }
-        for(int b : blacklist) {
-            // 已经在[size, n)内了，不操作
-            if(b >= size) {
-                continue;
-            }
-            // 已经存在了
-            while(map.containsKey(last)) {
-                last--;
-            }
-            // 放到数组尾部
-            map.put(b, last);
-            last--;
-        }
+        return dp(k, n);
     }
+    int[][] memo;
 
-    public int pick() {
-        Random random = new Random();
-        int index = random.nextInt(size) % size;
-        if(map.containsKey(index)) {
-            // 映射到数组尾部
-            return map.get(index);
+    // 状态：鸡蛋数、需要测试到第n层数
+    // 选择：哪一层扔鸡蛋
+    int dp(int k, int n) {
+        if(k == 1) {
+            return n;
         }
-        return index;
+        if(n == 0) {
+            return 0;
+        }
+        if(memo[k][n] != -1) {
+            return memo[k][n];
+        }
+        int res = Integer.MAX_VALUE;
+        int lo = 1, hi = n;
+        while(lo <= hi) {
+            int mid = lo + ((hi - lo) >> 1);
+            int broken = dp(k - 1, mid - 1);
+            int notBroken = dp(k, mid + 1);
+            if(broken > notBroken) {
+                hi= mid - 1;
+                res = Math.min(res, broken + 1);
+            } else {
+                lo = mid + 1;
+                res = Math.min(res, notBroken + 1);
+            }
+        }
+        memo[k][n] = res;
+        return res;
     }
 }
-
-/**
- * Your Solution object will be instantiated and called as such:
- * Solution obj = new Solution(n, blacklist);
- * int param_1 = obj.pick();
- */
