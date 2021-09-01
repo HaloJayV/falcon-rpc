@@ -38,6 +38,7 @@ public class NettyServer extends Server {
         this.serviceRegistry = new ServiceRegistry(registryAddress);
     }
 
+    // 添加服务
     public void addService(String interfaceName, String version, Object serviceBean) {
         logger.info("Adding service, interface:{}, version:{}, bean:{}",
                 interfaceName, version, serviceBean);

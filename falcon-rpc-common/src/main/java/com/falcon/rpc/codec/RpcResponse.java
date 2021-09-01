@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @Description: 响应对象
  */
 public class RpcResponse implements Serializable {
-
+    // 对应的请求id、错误信息、返回数据
     private String requestId;
     private String error;
     private Object result;

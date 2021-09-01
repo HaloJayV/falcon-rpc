@@ -25,8 +25,8 @@ public class ServiceDiscovery {
     private static final Logger logger = LoggerFactory.getLogger(ServiceDiscovery.class);
     private CuratorClient curatorClient;
 
-    public ServiceDiscovery(CuratorClient curatorClient) {
-        this.curatorClient = curatorClient;
+    public ServiceDiscovery(String registryAddress) {
+        this.curatorClient = new CuratorClient(registryAddress);
         discoveryService();
     }
 

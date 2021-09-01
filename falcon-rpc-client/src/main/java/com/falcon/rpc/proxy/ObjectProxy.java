@@ -7,12 +7,8 @@ import com.falcon.rpc.handler.RpcFuture;
 import com.falcon.rpc.util.ServiceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.management.MethodInfo;
-
-import java.lang.management.MemoryManagerMXBean;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -64,7 +60,7 @@ public class ObjectProxy<T, P> implements InvocationHandler, RpcService<T, P, Se
     }
 
     @Override
-    public RpcFuture call(String function, Objects... args) throws Exception {
+    public RpcFuture call(String function, Object... args) throws Exception {
         String serviceKey = ServiceUtil.makeServiceKey(this.clazz.getName(), version);
         RpcClientHandler handler = ConnectionManager.getInstance().chooseHandler(serviceKey);
         RpcRequest request = createRequest(this.clazz.getName(), function, args);
@@ -73,7 +69,7 @@ public class ObjectProxy<T, P> implements InvocationHandler, RpcService<T, P, Se
     }
 
     @Override
-    public RpcFuture call(SerializableFunction<T> tSerializableFunction, Objects... args) throws Exception {
+    public RpcFuture call(SerializableFunction<T> tSerializableFunction, Object... args) throws Exception {
         String serviceKey = ServiceUtil.makeServiceKey(this.clazz.getName(), version);
         RpcClientHandler handler = ConnectionManager.getInstance().chooseHandler(serviceKey);
         RpcRequest request = createRequest(this.clazz.getName(), tSerializableFunction.getName(), args);

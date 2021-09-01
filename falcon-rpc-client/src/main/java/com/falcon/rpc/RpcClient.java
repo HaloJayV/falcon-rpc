@@ -33,8 +33,9 @@ public class RpcClient implements ApplicationContextAware, DisposableBean {
             new ThreadPoolExecutor(16, 16,
                     600L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(1000));
 
-    public RpcClient(ServiceDiscovery serviceDiscovery) {
-        this.serviceDiscovery = serviceDiscovery;
+
+    public RpcClient(String address) {
+        this.serviceDiscovery = new ServiceDiscovery(address);
     }
 
     // 通过jdk动态代理创建服务代理对象
@@ -47,7 +48,7 @@ public class RpcClient implements ApplicationContextAware, DisposableBean {
         );
     }
 
-    public static<T, P>RpcService creqteAsyncService(Class<T> interfaceClass, String version) {
+    public static<T, P>RpcService createAsyncService(Class<T> interfaceClass, String version) {
         return new ObjectProxy<T, P>(interfaceClass, version);
     }
 

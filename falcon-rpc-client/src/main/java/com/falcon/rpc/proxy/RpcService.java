@@ -12,8 +12,8 @@ import java.util.Objects;
  */
 public interface RpcService<T, P, FN extends SerializableFunction<T>> {
 
-    RpcFuture call(String function, Objects... args) throws Exception;
+    RpcFuture call(String function, Object... args) throws Exception;
 
-    RpcFuture call(FN fn, Objects... args) throws Exception;
+    RpcFuture call(FN fn, Object... args) throws Exception;
 
 }

@@ -44,12 +44,13 @@ public class RpcServer extends NettyServer
     @Override
     public void setApplicationContext(ApplicationContext ctx) throws BeansException {
         // 获取当前全局容器中包含注解的bean，也就是服务方提供服务的方法接口对象
+        // 带有NettyRpcService注解都表示提供的服务，在这里添加带注册中心里
         Map<String, Object> serviceBeanMap = ctx.getBeansWithAnnotation(NettyRpcService.class);
         if(MapUtils.isNotEmpty(serviceBeanMap)) {
             // 处理每个服务对象
             for(Object serviceBean : serviceBeanMap.values()) {
                 NettyRpcService nettyRpcService = serviceBean.getClass().getAnnotation(NettyRpcService.class);
-                // 提供服务的接口名
+                // 获取该注解下的接口名、版本号
                 String interfaceName = nettyRpcService.value().getName();
                 String version = nettyRpcService.version();
                 // 拼接信息再放到serviceBeanMap里
