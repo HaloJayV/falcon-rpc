@@ -27,6 +27,7 @@ public class CuratorClient {
     public CuratorClient(String connectString, String namespace,
                           int sessionTimeout, int connectionTimeout) {
         client = CuratorFrameworkFactory.builder()
+                // 有限名
                 .namespace(namespace)
                 // 服务器列表
                 .connectString(connectString)

@@ -14,9 +14,9 @@ import java.util.Objects;
  * @Description: 自定义RPC协议，相当于一个服务提供方
  */
 public class RpcProtocol implements Serializable {
-
     private String host;
     private int port;
+    // 接口名和接口版本号
     private List<RpcServiceInfo> serviceInfoList;
 
     public String toJson() {

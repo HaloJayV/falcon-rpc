@@ -138,12 +138,13 @@ public class ConnectionManager {
             @Override
             public void run() {
                 Bootstrap bootstrap = new Bootstrap();
-                // 启动通道并配置
+                // 启动通道并配置接口服务对应的处理器
                 bootstrap.group(eventLoopGroup)
                         .channel(NioSocketChannel.class)
                         .handler(new RpcClientInitializer());
                 ChannelFuture channelFuture = bootstrap.connect(remotePeer);
                 channelFuture.addListener(new ChannelFutureListener() {
+                    // 通道完成后需要堆事件进行处理
                     @Override
                     public void operationComplete(ChannelFuture future) throws Exception {
                         // 事件处理完成

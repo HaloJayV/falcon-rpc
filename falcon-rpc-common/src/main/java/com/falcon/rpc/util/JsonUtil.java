@@ -17,7 +17,7 @@ import java.util.HashMap;
  * @Auther: JayV
  * @Email: javajayv@gmail.com
  * @Date: 2021-8-17 16:29
- * @Description:
+ * @Description: JSON序列化工具jackson
  */
 public class JsonUtil {
 
