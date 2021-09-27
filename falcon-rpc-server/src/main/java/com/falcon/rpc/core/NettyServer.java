@@ -44,7 +44,7 @@ public class NettyServer extends Server {
                 interfaceName, version, serviceBean);
         // 拼接服务接口名名和版本号的服务id
         String serviceKey = ServiceUtil.makeServiceKey(interfaceName, version);
-        // 服务名为key
+        // 请求接口id为key，请求参数对象为val
         serviceMap.put(serviceKey, serviceBean);
     }
 
@@ -64,12 +64,17 @@ public class NettyServer extends Server {
                 try {
                     ServerBootstrap bootstrap = new ServerBootstrap();
                     bootstrap.group(bossGroup, workGroup)
+                            // 设置服务端的channel，服务端启动后进行初始化
                             .channel(NioServerSocketChannel.class)
+                            // Socket参数，服务端接受连接的队列长度，如果队列已满，客户端连接将被拒绝。默认值，Windows为200，其他为128。
                             .option(ChannelOption.SO_BACKLOG, 128)
-                            .childHandler(new RpcServerInitializer(serviceMap, threadPoolExecutor))
+                            // 设置客户端的channel，客户端连接之后才进行初始化
                             // 创建通道初始化对象
+                            // 事件处理器
+                            .childHandler(new RpcServerInitializer(serviceMap, threadPoolExecutor))
+                            // Socket参数，连接保活，默认值为False。启用该功能时，TCP会主动探测空闲连接的有效性。可以将此功能视为TCP的心跳机制，需要注意的是：默认的心跳间隔是7200s即2小时。Netty默认关闭该功能。
                             .childOption(ChannelOption.SO_KEEPALIVE, true);
-                    // socket
+                    // socket，ip：port
                     String[] array = serverAddress.split(":");
                     String host = array[0];
                     int port = Integer.parseInt(array[1]);

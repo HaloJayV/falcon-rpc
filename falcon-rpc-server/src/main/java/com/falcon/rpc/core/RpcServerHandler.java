@@ -42,7 +42,7 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
             logger.info("Server read heartbeat ping");
             return;
         }
-
+        // 处理读取到的请求事件
         serverHandlerPool.execute(new Runnable() {
             @Override
             public void run() {
@@ -57,7 +57,8 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
                     response.setError(t.toString());
                     logger.error("RPC Server handle request error", t);
                 }
-                // 读取response响应信息到ChannelHandlerContext通道容器
+                // 读取response响应信息到ChannelHandlerContext通道上下文容器环境中
+                // 添加监听器，响应成功后打印日志
                 ctx.writeAndFlush(response).addListener(new ChannelFutureListener() {
                     @Override
                     public void operationComplete(ChannelFuture future) throws Exception {
@@ -68,12 +69,12 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
         });
     }
 
-    // 获取客户端RPC请求对象
+    // 处理请求后，返回客户端RPC请求对应的响应对象
     public Object handle(RpcRequest request) throws Throwable {
         String className = request.getClassName();
         String version = request.getVersion();
         String serviceKey = ServiceUtil.makeServiceKey(className, version);
-        // 当前rpc请求的服务对象
+        // 当前rpc请求的服务对象， 通过接口名称+版本号去获取对应的服务接口对象
         Object serviceBean = handlerMap.get(serviceKey);
         if(Objects.isNull(serviceBean)) {
             logger.error("Can not find service implement with interface name: {} and version: {}", className, version);
@@ -94,16 +95,19 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
         }
 
         // JDK reflect
-        // 根据参数类型和方法名获 取方法对象，通过方法对象、
+        // 根据参数类型和方法名获 取方法对象，
 //        Method method = serviceClass.getMethod(methodName, parameterTypes);
 //        method.setAccessible(true);
 //        return method.invoke(serviceBean, parameters);
 
-        // Cglib reflect
+        // 通过jdk或cglib进行动态代理，通过
+        // Cglib reflect，通过类对象获取到FastClass（相当于服务端的接口集合），通过方法名、参数类型、参数和接口对象执行对应接口方法
         FastClass serviceFastClass = FastClass.create(serviceClass);
 //        FastMethod method = serviceFastClass.getMethod(methodName, parameterTypes);
 //        return method.invoke(serviceBean, parameters);
+        // 方法对象
         int methodIndex = serviceFastClass.getIndex(methodName, parameterTypes);
+        // 通过方法对象、接口Bean、参数进行反射
         return serviceFastClass.invoke(methodIndex, serviceBean, parameters);
     }
 
@@ -113,6 +117,7 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
         ctx.close();
     }
 
+    // event从ctx的pipeline执行链中寻找，Inbound 执行顺序，由上到下。Outbound执行顺序由下到上
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if(evt instanceof IdleStateEvent) {

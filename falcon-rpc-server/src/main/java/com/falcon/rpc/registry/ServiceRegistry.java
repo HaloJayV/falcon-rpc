@@ -11,7 +11,6 @@ import org.apache.curator.framework.state.ConnectionStateListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,10 +34,17 @@ public class ServiceRegistry {
         this.curatorClient = new CuratorClient(registryAddress, 5000);
     }
 
+    /**
+     *  1、将接口名和版本号封装到RpcServiceInfo对象集合里
+     * @param host
+     * @param port
+     * @param serviceMap
+     */
     // 服务注册：注册新的服务到注册中心，也就是保存到对象RpcProtocol里
     public void registerService(String host, int port, Map<String, Object> serviceMap) {
         // 注册中心的所服务元数据信息集合
         List<RpcServiceInfo> serviceInfoList = new ArrayList<>();
+
         for(String key : serviceMap.keySet()) {
             // 元数据信息数组
             String[] serviceInfo = key.split(ServiceUtil.SERVICE_CONCAT_TOKEN);
@@ -57,6 +63,11 @@ public class ServiceRegistry {
             }
         }
         try {
+            /**
+             * 2、将服务提供方的 host、端口、接口名+版本号封装到对象，并序列化为json和字节数组，
+             *    之后将其hashcode值链接并保存到 curatorClient节点树的节点下，最后将刚才的字节数组数据绑定到对应的节点路径上
+             *    并批量保存到节点路径集合pathList
+             */
             // 服务的rpc协议对象
             RpcProtocol rpcProtocol = new RpcProtocol();
             rpcProtocol.setHost(host);
@@ -75,6 +86,9 @@ public class ServiceRegistry {
             logger.error("Register service fail, exception: {}", e.getMessage());
         }
 
+        /**
+         * 3、最后,通过curatorClient的addConnectionStateListener方法添加对节点的监听器，实现尝试重新连接机制
+         */
         // 需要在注册中心对每个节点添加节点状态监听器
         curatorClient.addConnectionStateListener(new ConnectionStateListener() {
             // 节点发生改变就需要重新注册
@@ -88,6 +102,9 @@ public class ServiceRegistry {
         });
     }
 
+    /**
+     * 将节点path从curatorClient中，通过client.delete().forPath(path)删除节点数据，并关闭curatorClient{}
+     */
     // 注销节点
     public void unregisterService() {
         logger.info("unregister all service");

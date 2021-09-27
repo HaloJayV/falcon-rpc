@@ -49,6 +49,7 @@ public class RpcServer extends NettyServer
         if(MapUtils.isNotEmpty(serviceBeanMap)) {
             // 处理每个服务对象
             for(Object serviceBean : serviceBeanMap.values()) {
+                // 获取服务端容器中，对外提供服务的接口对象
                 NettyRpcService nettyRpcService = serviceBean.getClass().getAnnotation(NettyRpcService.class);
                 // 获取该注解下的接口名、版本号
                 String interfaceName = nettyRpcService.value().getName();
